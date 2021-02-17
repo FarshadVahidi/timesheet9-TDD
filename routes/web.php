@@ -19,6 +19,7 @@ Route::get('/', function () {
 
 Route::view('/home', 'home');
 Route::view('/about', 'about');
+Route::view('/contact', 'contact');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
