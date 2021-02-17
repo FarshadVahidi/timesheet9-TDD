@@ -10,6 +10,8 @@ use Tests\TestCase;
 
 class multiAuthenticationTest extends TestCase
 {
+    use RefreshDatabase;
+
     /** @test */
     public function only_signed_in_staff_have_access_to_dashboard()
     {
@@ -27,6 +29,8 @@ class multiAuthenticationTest extends TestCase
         $user->attachRole($role);
 
         $this->assertTrue($user->hasRole('user'));
-        $this->actingAs($user)->get('/dashboard')->assertRedirect('user.dashboard');
+//        $this->actingAs($user)->get('/dashboard')->assertRedirect('user.dashboard'); this test check the URL but i am returning view
+        $this->actingAs($user)->get('/dashboard')->assertOk();
+        $this->actingAs($user)->get('/dashboard')->assertViewIs('user.dashboard');
     }
 }
