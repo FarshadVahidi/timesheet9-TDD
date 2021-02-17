@@ -30,5 +30,6 @@ Route::view('/contact', 'contact');
 Route::group(['middleware' => ['auth:sanctum', 'verified']], function(){
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/addNewPerson', [RegisterController::class, 'index']);
+    Route::get('/addNewPerson', [RegisterController::class, 'index'])->name('register');
+    Route::post('/addNewPerson', [RegisterController::class, 'store']);
 });
