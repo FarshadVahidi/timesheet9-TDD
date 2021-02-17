@@ -18,4 +18,14 @@ class RouteWithoutAuthTest extends TestCase
         $response->assertOk();
     }
 
+    /** @test */
+    public function route_for_about_us_page()
+    {
+        $this->withoutExceptionHandling();
+
+        $response = $this->get('/about');
+
+        $response->assertOk();
+    }
+
 }
