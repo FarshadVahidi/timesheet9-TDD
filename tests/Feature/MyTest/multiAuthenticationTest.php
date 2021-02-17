@@ -33,4 +33,26 @@ class multiAuthenticationTest extends TestCase
         $this->actingAs($user)->get('/dashboard')->assertOk();
         $this->actingAs($user)->get('/dashboard')->assertViewIs('user.dashboard');
     }
+
+    /** @test */
+    public function after_check_staffs_route_them_to_the_correct_dashboard()
+    {
+        $this->withoutExceptionHandling();
+
+        //these tre line are setting
+        $role1 = Role::factory()->create(['name' => 'superadministrator']);
+        $role2 = Role::factory()->create(['name' => 'administrator']);
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+        $user1->attachRole($role1);
+        $user2->attachRole($role2);
+
+        $this->assertTrue($user1->hasRole('superadministrator'));
+        $this->assertTrue($user2->hasRole('administrator'));
+
+        $this->actingAs($user1)->get('/dashboard')->assertOk();
+        $this->actingAs($user1)->get('/dashboard')->assertViewIs('super.dashboard');
+        $this->actingAs($user2)->get('/dashboard')->assertOk();
+        $this->actingAs($user2)->get('/dashboard')->assertViewIs('admin.dashboard');
+    }
 }
