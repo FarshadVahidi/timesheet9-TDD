@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\MyTest\super;
 
+use App\Models\Hour;
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -54,23 +56,25 @@ class superAdministratorTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $role = Role::factory()->create(['name' => 'superadministrator']);
+        $permission = Permission::factory()->create(['name' => 'hour-create']);
         $user = User::factory()->create();
         $user->attachRole($role);
+        $user->attachPermission($permission);
 
-        $response = $this->post('/createNewHour' , $this->data($user));
+        $this->actingAs($user)->post('/createNewHour' , $this->data($user));
 
         $hour = Hour::first();
 
         $this->assertCount(1, Hour::all());
-        $this->assertEquals($hour->user_id, $user->id);
+        $this->assertEquals(Hour::first()->user_id, $user->id);
     }
 
     public function data(User $user): array
     {
         return [
             'user_id' => $user->id,
-            'date' => '05-02-1983',
-            'hour' => '800',
+            'Date' => '1983/02/05',
+            'Hour' => '800',
         ];
     }
 }
