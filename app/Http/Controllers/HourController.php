@@ -29,7 +29,7 @@ class HourController extends Controller
                 }
             }
         }else{
-            return back()->with('date_duplicate', 'THE ENTERED DATE EXIST!');
+            return redirect('/addNewHour')->with('date_duplicate', 'THE ENTERED DATE EXIST!');
         }
     }
 }

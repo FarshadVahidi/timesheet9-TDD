@@ -8,6 +8,7 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class superAdministratorTest extends TestCase
@@ -61,6 +62,39 @@ class superAdministratorTest extends TestCase
 
         $this->assertCount(1, Hour::all());
         $this->assertEquals(Hour::first()->user_id, $user->id);
+    }
+
+    /** @test */
+    public function if_super_add_duplicate_hour_redirect_with_out_saving()
+    {
+        $this->withoutExceptionHandling();
+
+        //these line just add specific hour to db as setup
+        $user = User::find(1);
+        $this->actingAs($user)->post('/createNewHour' , $this->data($user));
+        $hour = Hour::first();
+        $this->assertCount(1, Hour::all());
+        $this->assertEquals(Hour::first()->user_id, $user->id);
+
+        //duplicate hour
+        $response = $this->post('/createNewHour', $this->data($user));
+
+        $response->assertRedirect('/addNewHour');
+        $this->assertcount(1, Hour::all());
+    }
+
+    /** @test */
+    public function super_can_see_hour_of_all_staffs()
+    {
+        $this->withoutExceptionHandling();
+
+        $hour1 = Hour::factory()->create(['user_id'=> 3, 'date'=>'2021/01/05', 'hour'=>100]);
+
+        $user = User::find(1);
+
+        $response = $this->actingAs($user)->get('/staffHour');
+        $response->assertSee($hour1);
+
     }
 
     public function data(User $user): array
