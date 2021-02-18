@@ -48,4 +48,29 @@ class superAdministratorTest extends TestCase
         $response = $this->actingAs($user)->post('/addNewPerson',['name' => 'farshad', 'email' => 'farshad@app.com', 'password' => 'password', 'role_id' => 'administrator']);
         $this->assertCount(2, User::all());
     }
+
+    /** @test */
+    public function super_can_add_hour()
+    {
+        $this->withoutExceptionHandling();
+        $role = Role::factory()->create(['name' => 'superadministrator']);
+        $user = User::factory()->create();
+        $user->attachRole($role);
+
+        $response = $this->post('/createNewHour' , $this->data($user));
+
+        $hour = Hour::first();
+
+        $this->assertCount(1, Hour::all());
+        $this->assertEquals($hour->user_id, $user->id);
+    }
+
+    public function data(User $user): array
+    {
+        return [
+            'user_id' => $user->id,
+            'date' => '05-02-1983',
+            'hour' => '800',
+        ];
+    }
 }

@@ -20,7 +20,7 @@ class DashboardController extends Controller
         elseif($user->hasRole('superadministrator'))
             return view('super.dashboard');
         else
-            return view('dashboard');
+            return redirect('/login');
     }
 
 }
