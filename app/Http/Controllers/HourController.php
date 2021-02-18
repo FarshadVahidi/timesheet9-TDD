@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Hour;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 
 class HourController extends Controller
@@ -30,6 +32,20 @@ class HourController extends Controller
             }
         }else{
             return redirect('/addNewHour')->with('date_duplicate', 'THE ENTERED DATE EXIST!');
+        }
+    }
+
+    public function staffHour()
+    {
+        if(Auth::user()->hasRole('superadministrator'))
+        {
+            $staffsHour = DB::table('users')->join('hours', 'users.id' , '=', 'hours.user_id')->select('users.id', 'users.name', DB::raw('sum(hour) as sum'))
+                ->groupBy('users.id')->orderByRaw('user_id ASC')->get();
+
+            return view('super.staffHour', compact('staffsHour'));
+        }
+        else{
+            return back()->with('hasNotPermission', 'YOU DO NOT HAVE ACCESS TO THIS SECTION!!!');
         }
     }
 }

@@ -92,9 +92,8 @@ class superAdministratorTest extends TestCase
 
         $user = User::find(1);
 
-        $response = $this->actingAs($user)->get('/staffHour');
-        $response->assertSee($hour1);
-
+        $response = $this->actingAs($user)->get('/staffHour')->assertSee($hour1->sum);
+        $response->assertOk();
     }
 
     public function data(User $user): array
