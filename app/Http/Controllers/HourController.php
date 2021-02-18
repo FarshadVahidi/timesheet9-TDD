@@ -14,9 +14,8 @@ class HourController extends Controller
         $entry = Hour::where('user_id', '=', $request->user()->id)->where('date', '=', $request->Date)->first();
         if($entry === null)
         {
-            if(Auth::user()->isAbleTo('hour-create'))
+            if(Auth::user()->isAbleTo('hours-create'))
             {
-
                 try{
                     $hour = new Hour();
                     $hour->user_id = $request->user()->id;
@@ -28,9 +27,9 @@ class HourController extends Controller
                 }catch(\Exception $exception){
                     return Redirect::back()->withErrors(['msg', 'The Message']);
                 }
-            }else{
-                return back()->with('date_duplicate', 'THE ENTERED DATE EXIST!');
             }
+        }else{
+            return back()->with('date_duplicate', 'THE ENTERED DATE EXIST!');
         }
     }
 }
