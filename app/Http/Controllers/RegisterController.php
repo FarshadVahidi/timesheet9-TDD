@@ -14,26 +14,38 @@ class RegisterController extends Controller
         $user = Auth::user();
         if($user->hasRole('superadministrator'))
             return view('super.registration');
+        else{
+            Auth::logout();
+            return redirect('/home');
+        }
+
 
     }
 
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\RedirectResponse
     {
-        $data = $request->validate([
-           'name'=>'required|string|max:255',
-           'email'=>'required|string|email|unique:users',
-           'password'=>'required|min:8',
-           'role_id'=>'required|string'
-        ]);
+        $data = $this->validateRequest();
+        $data['password'] = Hash::make($data['password']);
 
-        $user = new User();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = Hash::make($request->password);
+        $user = User::create($data);
         $user->save();
-        $user->attachRole($request->role_id);
+        $user->attachRole($data['role_id']);
 
         return back()->with('user_added', 'User added successfully.');
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    private function validateRequest(): array
+    {
+        return request()->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|unique:users',
+            'password' => 'required|min:8',
+            'role_id' => 'required|string'
+        ]);
     }
 
 }
